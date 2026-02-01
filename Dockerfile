@@ -1,29 +1,28 @@
-# Multi-stage build: minimal + production
-FROM python:3.12-slim AS builder
+# Simple + reliable GAME.es scraper Docker
+FROM python:3.12-slim
 
-# Install uv
-RUN apt-get update && apt-get install -y curl && \
-    curl -LsSf https://astral.sh/uv/install.sh | sh && \
-    /root/.cargo/bin/uv --version
-
-WORKDIR /app
-COPY pyproject.toml .
-RUN --mount=type=cache,target=/root/.cache/uv \
-    /root/.cargo/bin/uv pip install --cache-dir /root/.cache/uv -e .
-
-FROM python:3.12-slim AS runtime
-RUN apt-get update && apt-get install -y curl && apt-get clean
-
-# Copy uv + installed packages
-COPY --from=builder /root/.local /root/.local
-COPY --from=builder /app /app
-ENV PATH="/root/.local/bin:$PATH"
+# Install only curl (minimum)
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
 WORKDIR /app
-RUN mkdir -p data
 
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8080/health || exit 1
+# Copy project files
+COPY pyproject.toml README.md ./
+COPY src/ ./src/
+COPY config.toml ./
 
-CMD ["uv", "run", "python", "-m", "src.game_scraper.main"]
+# Create data directory
+RUN mkdir -p data && chmod 777 data
+
+# Install Python dependencies with pip (SIMPLE)
+RUN pip install --no-cache-dir \
+    requests \
+    beautifulsoup4 \
+    pydantic \
+    tomli
+
+# Run scraper
+CMD ["python", "-m", "src.game_scraper.main"]
