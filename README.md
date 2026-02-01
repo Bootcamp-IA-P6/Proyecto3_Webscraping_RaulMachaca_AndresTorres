@@ -12,7 +12,7 @@ Professional **GAME.es** web scraper that extracts **Warhammer 40k** product dat
 ## 🎮 Demo Output
 
 **data/products_20260201_221200.json**
-
+```json
 {
   "title": "Warhammer 40.000 Space Marine II",
   "price": "34'99€",
@@ -22,7 +22,7 @@ Professional **GAME.es** web scraper that extracts **Warhammer 40k** product dat
     { "name": "Grand Theft Auto V", "price": "19'99€" }
   ]
 }
-
+```
 ---
 
 ## 🚀 Quick Start
@@ -74,3 +74,29 @@ PYTHONPATH=src pytest
 
 src/game_scraper/main.py
 
+## 🐳 Docker
+```bash
+### Quick Docker Run
+
+docker-compose up --build
+# Files saved → data/products_*.json (persistent volume)
+```
+
+### Single Run
+```bash
+docker-compose run --rm game-scraper
+```
+
+### Verify Data Persistence
+```bash
+ls -la data/  # JSON + CSV files locally!
+```
+
+### Docker Compose Services
+```bash
+game-scraper:
+  ✅ Image: python:3.12-slim (~150MB)
+  ✅ Volume: ./data:/app/data (persistent)
+  ✅ pip deps: requests + beautifulsoup4
+  ✅ CMD: python -m src.game_scraper.main
+```
