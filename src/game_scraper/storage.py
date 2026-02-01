@@ -75,3 +75,5 @@ def save_all_formats(data: GameProduct, output_dir: str = "data") -> List[str]:
     filenames.append(save_json(data, output_dir))
     filenames.append(save_csv(data, output_dir))
     return filenames
+ 
+ 
