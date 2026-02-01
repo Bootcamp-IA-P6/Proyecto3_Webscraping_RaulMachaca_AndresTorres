@@ -1,0 +1,17 @@
+[scraper]
+target_url = "https://www.game.es/videojuegos/accion/playstation-5/warhammer-40000-space-marine-ii/227743"
+user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+[selectors.game_es]
+title = "h2.product-title span.cm-txt"
+price_int = ".buy--price .int"
+price_decimal = ".buy--price .decimal"
+price_currency = ".buy--price .currency"
+ratings_count = 'a[href="#valoracion"]'
+related_names = 'a[id^="Related_"] .thumb-title span.cm-txt'
+related_prices = 'a[id^="Related_"] .buy--price'
+
+[output]
+formats = ["json", "csv"]
+data_dir = "data"
+timestamp_format = "%Y%m%d_%H%M%S"
