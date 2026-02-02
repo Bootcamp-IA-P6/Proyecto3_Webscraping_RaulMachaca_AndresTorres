@@ -72,30 +72,6 @@ pytest tests/test_scraper.py -v
 ```
 
 ## ✅ Resultado esperado
-================== 5 passed ==================
-### 🔍 Los tests verifican:
-- ✅ JSON y CSV generados (≥ 2 archivos)
-- ✅ Screenshots reales (> 5KB)
-- ✅ Dashboard funcional sin imágenes embebidas
-- ✅ Datos válidos (precio, título, productos relacionados)
-
-## 🌐 Dashboard LIVE
-http://localhost:8080/dashboard.html
-### Incluye:
-
-- 📈 Gráfico de precios en tiempo real
-- 📊 Estadísticas de scrapes y screenshots
-- 📋 Productos relacionados
-- 🔄 Auto-refresh cada 1 minuto (F5)
-
-## 🐳 Tech Stack
-- 🐳 Docker        → Playwright v1.44.0 (jammy) + Cron
-- 📱 Playwright   → Chromium + screenshots reales
-- 📊 Jinja2       → Renderizado del dashboard
-- 📈 Chart.js     → Gráficos interactivos
-- 🧪 Pytest       → 5 tests automatizados
-
-## 🔍 Logs en vivo
 ```bash
 docker-compose logs -f game-scraper-cron
 ```
