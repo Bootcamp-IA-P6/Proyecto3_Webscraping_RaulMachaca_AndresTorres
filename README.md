@@ -2,6 +2,24 @@
 
 **Scraper profesional** que **cada minuto** extrae datos de **Warhammer 40.000: Space Marine II (PS5)** desde **GAME.es**.
 
+⚠️ **IMPORTANTE – Entorno virtual obligatorio**
+
+Antes de ejecutar el proyecto, **cada usuario debe crear y activar su propio entorno virtual (`venv`)** para evitar conflictos de dependencias.
+
+### 🐍 Crear y activar `venv`
+
+```bash
+python -m venv venv
+```
+### Linux / macOS / WSL
+```bash
+source venv/bin/activate
+```
+### Windows (PowerShell)
+```bash
+venv\Scripts\Activate.ps1
+```
+
 ## ✨ Funcionalidades
 
 - 💰 Precio + **productos relacionados** (GTA V, 007 First Light)
