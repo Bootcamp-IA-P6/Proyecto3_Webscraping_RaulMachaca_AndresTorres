@@ -11,9 +11,9 @@ COPY pyproject.toml README.md ./
 COPY src/ ./src/
 COPY config.toml entrypoint.sh ./
 
-RUN mkdir -p /app/data /var/log/cron && \
+RUN mkdir -p /app/data /app/reports /var/log/cron && \
     touch /var/log/cron/scraper.log /var/log/cron.log && \
-    chmod 777 /app/data /var/log/cron /var/log/cron/*
+    chmod 777 /app/data /app/reports /var/log/cron /var/log/cron/*
 
 RUN pip install --no-cache-dir \
     requests \
@@ -22,7 +22,6 @@ RUN pip install --no-cache-dir \
     tomli \
     jinja2
 
-# Cronjob cada 2 min + PATH completo
 RUN echo "*/2 * * * * cd /app && /usr/local/bin/python -m src.game_scraper.main >> /var/log/cron/scraper.log 2>&1" > /etc/cron.d/game-scraper && \
     chmod 0644 /etc/cron.d/game-scraper && \
     crontab /etc/cron.d/game-scraper
