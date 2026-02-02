@@ -6,6 +6,9 @@ from .scraper import GameScraper
 from .models import GameProduct
 from .storage import save_all_formats
 from .config import load_config  # Temporal
+from playwright.sync_api import sync_playwright
+import os
+from pathlib import Path
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -44,6 +47,23 @@ def generate_report():
     generator = HtmlReportGenerator()
     report_path = generator.generate_dashboard()
     print(f"📊 HTML Report: {report_path}")
+
+
+def capture_product_screenshot(product_url: str, product_id: str, base_path: Path) -> str:
+    """Captura screenshot de producto Warhammer"""
+    screenshot_path = base_path / "screenshots" / f"{product_id}.jpg"
+    screenshot_path.parent.mkdir(exist_ok=True)
+    
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.goto(product_url, wait_until="networkidle")
+        
+        # Screenshot del elemento producto (selector GAME.es)
+        page.locator(".product-detail").screenshot(path=screenshot_path)
+        browser.close()
+    
+    return str(screenshot_path)
 
 if __name__ == "__main__":
     main()
