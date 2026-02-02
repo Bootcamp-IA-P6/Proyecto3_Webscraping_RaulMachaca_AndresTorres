@@ -1,10 +1,17 @@
-# 📌 Step 1 — Core Project Setup & Overview  
-This document represents **Step 1** of the full Game Scraper workflow.  
-It covers the **initial setup**, **environment configuration**, and **base execution instructions** required before moving on to the next steps.
+# 📌 Step 2 — Docker Setup & Containerized Execution  
+This section represents **Step 2** of the Game Scraper workflow.  
+Here you will learn how to **containerize the scraper**, run it using **Docker Compose**, and verify that the output is correctly persisted.
 
 ---
 
-# 🎮 Game Scraper
+# 🐳 Docker — Containerized Game Scraper
+
+Docker allows you to run the scraper in a **clean, isolated environment**, without needing to install Python, uv, or dependencies on your machine.  
+Everything runs inside a lightweight container based on **python:3.12-slim**.
+
+---
+
+# 🎮 Game Scraper Overview
 
 Professional **GAME.es** web scraper that extracts **Warhammer 40k** product data:
 
@@ -15,7 +22,7 @@ Professional **GAME.es** web scraper that extracts **Warhammer 40k** product dat
 
 ---
 
-## 🎮 Demo Output
+# 📊 Demo Output
 
 **data/products_20260201_221200.json**
 ```json
@@ -32,9 +39,11 @@ Professional **GAME.es** web scraper that extracts **Warhammer 40k** product dat
 
 ---
 
-# 🚀 Quick Start
+# 🚀 Quick Start (Local Execution Recap)
 
-## Clone & Virtual Environment
+Before using Docker, here is the local workflow (Step 1):
+
+### Clone & Virtual Environment
 ```bash
 git clone <repo> game-scraper
 cd game-scraper
@@ -44,25 +53,19 @@ source venv/bin/activate      # Linux / Mac
 # venv\Scripts\activate       # Windows
 ```
 
----
-
-## uv setup (IMPORTANT)
+### uv setup (IMPORTANT)
 ```bash
 pip install uv
 uv sync --dev
 uv pip install -e .
 ```
 
----
-
-## Run scraper
+### Run scraper
 ```bash
 uv run python -m src.game_scraper.main
 ```
 
----
-
-## Run tests
+### Run tests
 ```bash
 uv run pytest tests/ -v
 ```
@@ -79,7 +82,7 @@ config.toml           # GAME.es selectors
 
 ---
 
-## 🧪 Tests & Coverage
+# 🧪 Tests & Coverage
 ```bash
 uv run pytest --cov=src/game_scraper/ tests/
 ```
@@ -88,17 +91,17 @@ uv run pytest --cov=src/game_scraper/ tests/
 
 # 🔧 Troubleshooting (uv / pytest)
 
-### Error:
+### Error
 ```
 ModuleNotFoundError: No module named 'src'
 ```
 
-### Solution:
+### Solution
 ```bash
 uv pip install -e .
 ```
 
-### Alternative (run tests from ROOT):
+### Alternative
 ```bash
 PYTHONPATH=src pytest
 ```
@@ -112,25 +115,61 @@ src/game_scraper/main.py
 
 ---
 
-# 🐳 Docker
+# 🐳 Step 2 — Docker Setup & Usage  
+Below is the **official Docker workflow** for running the scraper inside a container.
+
+---
+
+## ✅ 1. Quick Docker Run (recommended)
+This command builds the image and starts the scraper:
 
 ```bash
-### Quick Docker Run
 docker-compose up --build
-# Files saved → data/products_*.json (persistent volume)
 ```
 
-### Single Run
+### ✔ What happens?
+- Docker builds the image using `python:3.12-slim`
+- Installs dependencies (`requests`, `beautifulsoup4`, etc.)
+- Runs the scraper automatically
+- Saves output files to:
+
+```
+data/products_*.json
+data/products_*.csv
+```
+
+### ✔ Persistent Volume
+Your local `./data` folder is mounted inside the container:
+
+```
+./data  →  /app/data
+```
+
+This means **files are saved on your machine**, not inside the container.
+
+---
+
+## 🧪 2. Single Run (one-time execution)
+If you want to run the scraper once:
+
 ```bash
 docker-compose run --rm game-scraper
 ```
 
-### Verify Data Persistence
+---
+
+## 📂 3. Verify Data Persistence
+Check that the scraper generated files:
+
 ```bash
-ls -la data/  # JSON + CSV files locally!
+ls -la data/
 ```
 
-### Docker Compose Services
+You should see timestamped JSON and CSV files.
+
+---
+
+## 🧱 4. Docker Compose Services Breakdown
 ```bash
 game-scraper:
   ✅ Image: python:3.12-slim (~150MB)
@@ -138,3 +177,22 @@ game-scraper:
   ✅ pip deps: requests + beautifulsoup4
   ✅ CMD: python -m src.game_scraper.main
 ```
+
+### Explanation
+| Component | Meaning |
+|----------|---------|
+| **Image** | Base container (lightweight Python 3.12) |
+| **Volume** | Saves output to your local machine |
+| **Dependencies** | Installed inside the container |
+| **CMD** | Runs the scraper automatically |
+
+---
+
+## 🎯 Summary of Step 2
+
+- You now have the scraper running **inside Docker**  
+- Output files are saved **persistently**  
+- No need to install Python or uv locally  
+- Ready for **Step 3: Automated Cronjob Execution**
+
+---
