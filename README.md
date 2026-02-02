@@ -1,15 +1,20 @@
-# Game Scraper
-
-Professional **GAME.es** web scraper that extracts **Warhammer 40k** product data:
-
-- Title, price, ratings, **related products** (007 First Light, GTA V)
-- **JSON + CSV** output with timestamps
-- **Pydantic** validation + **pytest** coverage
-- **uv** modern tooling
+# 📌 Step 3 — Cronjob Automation (every 2 minutes)  
+Automated execution of the Game Scraper using a **cron-enabled Docker container**, generating timestamped JSON/CSV files every **2 minutes**.
 
 ---
 
-## 🎮 Demo Output
+# 🎮 Game Scraper
+
+Professional **GAME.es** web scraper that extracts **Warhammer 40k** product data:
+
+- Title, price, ratings, **related products** (007 First Light, GTA V)  
+- **JSON + CSV** output with timestamps  
+- **Pydantic** validation + **pytest** coverage  
+- **uv** modern tooling  
+
+---
+
+# 📊 Demo Output
 
 **data/products_20260201_221200.json**
 ```json
@@ -23,61 +28,86 @@ Professional **GAME.es** web scraper that extracts **Warhammer 40k** product dat
   ]
 }
 ```
+
 ---
 
-## 🚀 Quick Start
-## Clone & Virtual Environment
+# 🚀 Quick Start (Local Execution)
 
+## Clone & Virtual Environment
+```bash
 git clone <repo> game-scraper
 cd game-scraper
 python -m venv venv
-source venv/bin/activate   # Linux / Mac
-.# venv\Scripts\activate    # Windows
+source venv/bin/activate      # Linux / Mac
+# venv\Scripts\activate       # Windows
+```
 
 ## uv setup (IMPORTANT)
-
+```bash
 pip install uv
 uv sync --dev
 uv pip install -e .
+```
 
 ## Run scraper
-
+```bash
 uv run python -m src.game_scraper.main
+```
 
 ## Run tests
-
+```bash
 uv run pytest tests/ -v
+```
+
+---
 
 # 📁 Project Structure
-
+```
 src/game_scraper/     # Core scraper + parser
-tests/               # pytest + HTML samples
-data/                # JSON + CSV output
-config.toml          # GAME.es selectors
+tests/                # pytest + HTML samples
+data/                 # JSON + CSV output
+config.toml           # GAME.es selectors
+```
 
-## 🧪 Tests & Coverage
+---
 
+# 🧪 Tests & Coverage
+```bash
 uv run pytest --cov=src/game_scraper/ tests/
+```
+
+---
 
 # 🔧 Troubleshooting (uv / pytest)
 
-## Error:
+### Error
+```
 ModuleNotFoundError: No module named 'src'
+```
 
-## Solution:
+### Solution
+```bash
 uv pip install -e .
+```
 
-## Alternative (run tests from ROOT):
+### Alternative
+```bash
 PYTHONPATH=src pytest
+```
+
+---
 
 # 🧠 Main Entrypoint
-
+```
 src/game_scraper/main.py
+```
 
-## 🐳 Docker
-```bash
+---
+
+# 🐳 Docker (Step 2 Recap)
+
 ### Quick Docker Run
-
+```bash
 docker-compose up --build
 # Files saved → data/products_*.json (persistent volume)
 ```
@@ -101,48 +131,65 @@ game-scraper:
   ✅ CMD: python -m src.game_scraper.main
 ```
 
-### ⏰ CRONJOB PRODUCTION (cada 2 minutos)
+---
 
-Cronjob configurado para ejecutar el scraper automáticamente en entorno de producción, generando archivos persistentes cada 2 minutos mediante Docker.
+# ⏰ Step 3 — Cronjob Automation (every 2 minutes)
 
-- Ejecución automática cada 2 minutos
+The scraper can run **automatically every 2 minutes** using a cronjob inside the Docker container.
 
-- Generación de archivos JSON + CSV con timestamp
+### What the cronjob does:
+- Executes the scraper **every 2 minutes**  
+- Generates timestamped **JSON + CSV** files  
+- Saves them in a **persistent local volume**  
+- Logs execution output  
+- Fully compatible with **Windows Git Bash** using `MSYS_NO_PATHCONV=1`
 
-- Logs accesibles desde Docker y dentro del contenedor
+---
 
-- Compatible con Windows + Git Bash usando MSYS_NO_PATHCONV=1
+# 🎯 Step 3 – Summary
 
-### 🎯 Step 3 – Resumen
-
-✅ Cron ejecuta el scraper cada 2 minutos
-
-✅ Archivos generados:
+### ✔ Cron runs the scraper every 2 minutes  
+### ✔ Generated files:
+```
 data/products_YYYYMMDD_HHMMSS.json
 data/products_YYYYMMDD_HHMMSS.csv
+```
 
-✅ Logs disponibles en:
-
+### ✔ Logs available:
+```
 docker-compose logs -f
-
 /var/log/cron/scraper.log
+```
 
-✅ Volumen persistente en Windows (Git Bash compatible)
+### ✔ Persistent volume works on Windows
 
-### 🚀 Comandos Git Bash (Windows)
-## Inicio (cron automático)
+---
+
+# 🚀 Git Bash Commands (Windows)
+
+## Start cron-enabled service
+```bash
 MSYS_NO_PATHCONV=1 docker-compose up -d --build
+```
 
-## Ver logs en vivo (ejecución cada 2 minutos)
+## View live logs (every 2 minutes)
+```bash
 MSYS_NO_PATHCONV=1 docker-compose logs -f
+```
 
-## Detener el servicio
+## Stop service
+```bash
 MSYS_NO_PATHCONV=1 docker-compose down
+```
 
-## Ver archivos generados localmente
-ls -la data/      # En Windows: dir data\
+## View generated files
+```bash
+ls -la data/      # Windows: dir data\
+```
 
-### 📁 docker-compose.yml
+---
+
+# 📁 docker-compose.yml
 ```bash
 services:
   game-scraper:
@@ -155,39 +202,44 @@ services:
     restart: unless-stopped
 ```
 
-### ✅ Output Esperado
+---
+
+# ✅ Expected Output
+```
 data/products_20260202_013000.json
 data/products_20260202_013000.csv
 data/products_20260202_013200.json
 data/products_20260202_013200.csv
+```
 
+All files are generated locally in the `data/` folder every 2 minutes.
 
-Todos los archivos se generan localmente en la carpeta data/ cada 2 minutos.
+---
 
-### 🔧 Troubleshooting (Windows / Git Bash)
-## Problema
+# 🔧 Troubleshooting (Windows / Git Bash)
 
-Se crea una carpeta incorrecta llamada data;C.
+## Problem  
+A wrong folder named `data;C` is created.
 
-### Solución
-
-#### Usar siempre:
+## Solution  
+Always run Docker Compose with:
 ```bash
 MSYS_NO_PATHCONV=1 docker-compose up -d
 ```
 
-### Alternativa directa con Docker:
+### Direct Docker alternative
 ```bash
 docker run -v "$(pwd)/data:/app/data"
 ```
-### 📊 Métricas Step 3
 
-- Cron frequency: */2 * * * * (cada 2 minutos)
+---
 
-- Archivos generados: 720 por día (JSON + CSV)
+# 📊 Step 3 Metrics
 
-- Tamaño estimado: ~50 KB por ejecución
+- Cron frequency: `*/2 * * * *`  
+- Files generated: **720 per day**  
+- Estimated size: ~50 KB per execution  
+- Daily usage: ~36 MB  
+- Storage: persistent local volume (`data/`)  
 
-- Uso diario: ~36 MB / día
-
-- Almacenamiento: volumen local persistente (data/)
+---
