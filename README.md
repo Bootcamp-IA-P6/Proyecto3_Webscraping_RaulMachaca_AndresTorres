@@ -1,11 +1,17 @@
-# Game Scraper
+# 📌 Step 1 — Core Project Setup & Overview  
+This document represents **Step 1** of the full Game Scraper workflow.  
+It covers the **initial setup**, **environment configuration**, and **base execution instructions** required before moving on to the next steps.
+
+---
+
+# 🎮 Game Scraper
 
 Professional **GAME.es** web scraper that extracts **Warhammer 40k** product data:
 
-- Title, price, ratings, **related products** (007 First Light, GTA V)
-- **JSON + CSV** output with timestamps
-- **Pydantic** validation + **pytest** coverage
-- **uv** modern tooling
+- Title, price, ratings, **related products** (007 First Light, GTA V)  
+- **JSON + CSV** output with timestamps  
+- **Pydantic** validation + **pytest** coverage  
+- **uv** modern tooling  
 
 ---
 
@@ -23,61 +29,93 @@ Professional **GAME.es** web scraper that extracts **Warhammer 40k** product dat
   ]
 }
 ```
+
 ---
 
-## 🚀 Quick Start
-## Clone & Virtual Environment
+# 🚀 Quick Start
 
+## Clone & Virtual Environment
+```bash
 git clone <repo> game-scraper
 cd game-scraper
+
 python -m venv venv
-source venv/bin/activate   # Linux / Mac
-.# venv\Scripts\activate    # Windows
+source venv/bin/activate      # Linux / Mac
+# venv\Scripts\activate       # Windows
+```
+
+---
 
 ## uv setup (IMPORTANT)
-
+```bash
 pip install uv
 uv sync --dev
 uv pip install -e .
+```
+
+---
 
 ## Run scraper
-
+```bash
 uv run python -m src.game_scraper.main
+```
+
+---
 
 ## Run tests
-
+```bash
 uv run pytest tests/ -v
+```
+
+---
 
 # 📁 Project Structure
-
+```
 src/game_scraper/     # Core scraper + parser
-tests/               # pytest + HTML samples
-data/                # JSON + CSV output
-config.toml          # GAME.es selectors
+tests/                # pytest + HTML samples
+data/                 # JSON + CSV output
+config.toml           # GAME.es selectors
+```
+
+---
 
 ## 🧪 Tests & Coverage
-
+```bash
 uv run pytest --cov=src/game_scraper/ tests/
+```
+
+---
 
 # 🔧 Troubleshooting (uv / pytest)
 
-## Error:
+### Error:
+```
 ModuleNotFoundError: No module named 'src'
+```
 
-## Solution:
+### Solution:
+```bash
 uv pip install -e .
+```
 
-## Alternative (run tests from ROOT):
+### Alternative (run tests from ROOT):
+```bash
 PYTHONPATH=src pytest
+```
+
+---
 
 # 🧠 Main Entrypoint
-
+```
 src/game_scraper/main.py
+```
 
-## 🐳 Docker
+---
+
+# 🐳 Docker
+
 ```bash
 ### Quick Docker Run
-
 docker-compose up --build
 # Files saved → data/products_*.json (persistent volume)
 ```
