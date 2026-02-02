@@ -1,19 +1,33 @@
 #!/bin/bash
-echo "🚀 Starting GAME.es cron scraper..."
+echo "🚀 Starting GAME.es Warhammer Scraper v2.0..."
 
-# CREAR logs explícitamente
+# Crear logs
 touch /var/log/cron/scraper.log /var/log/cron.log
 chmod 666 /var/log/cron/scraper.log /var/log/cron.log
 
-echo "📁 Data volume: $(ls -la /app/data)"
-echo "⏰ Starting cron cada 2 minutos..."
+echo "📁 Data volume: $(ls -la /app/data || echo 'Vacío')"
+echo "⏰ Starting cron cada minuto..."
 
 # Start cron daemon
 service cron start
 
 # Debug crontab
+echo "📋 Crontab:"
 crontab -l
 
-# Esperar primer job + tail logs
-sleep 60  # Esperar 1 min para primer cron
+# 🔥 LIVE DASHBOARD: Esperar primer scrape + abrir browser
+echo "🌐 Esperando primer scrape (60s)..."
+sleep 65 # 1min + 5s margen
+
+echo "✅ Primer scrape completado!"
+echo "🌐 Abriendo LIVE Dashboard: http://localhost:8080"
+
+# LIVE SERVER (actualización automática)
+python3 -m http.server 8080 --directory /app/reports --bind 0.0.0.0 &
+SERVER_PID=$!
+
+# Mantener logs + auto-refresh dashboard
+echo "🔄 Dashboard LIVE en: http://localhost:8080/dashboard.html"
+echo "📊 Actualización automática cada 1min (F5 o Ctrl+R)"
+echo "📈 Logs en tiempo real:"
 tail -f /var/log/cron/scraper.log /var/log/cron.log

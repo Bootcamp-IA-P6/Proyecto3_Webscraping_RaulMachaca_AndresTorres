@@ -16,23 +16,19 @@
         .stat-number { font-size: 2em; color: #ff6b35; font-weight: bold; }
         .chart-container { background: #2a2a2a; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
         .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        .product-card { background: #363636; padding: 20px; border-radius: 10px; transition: transform 0.3s; }
-        .product-card:hover { transform: translateY(-5px); }
-        .product-image { margin-bottom: 15px; border-radius: 8px; overflow: hidden; }
-        .screenshot { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
-        .product-title { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .product-card { background: #363636; padding: 20px; border-radius: 10px; }
+        .product-title { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; }
         .product-price { font-size: 1.5em; color: #4ecdc4; font-weight: bold; margin-bottom: 10px; }
         .ratings { color: #ffeb3b; font-size: 0.9em; margin-bottom: 10px; }
         .related-products { margin-top: 15px; font-size: 0.9em; color: #ccc; }
-        .no-screenshot { height: 200px; background: #2a2a2a; display: flex; align-items: center; justify-content: center; color: #666; border-radius: 8px; border: 2px dashed #444; }
-        .screenshot-status { font-size: 0.8em; padding: 4px 8px; border-radius: 4px; background: #ff6b35; color: white; margin-top: 5px; }
+        .screenshots-note { background: #2a2a2a; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; color: #ff6b35; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🎮 GAME.es Warhammer Monitor</h1>
-            <p>Precios, productos relacionados y 📸 screenshots (Actualizado: {{ generated_at }})</p>
+            <p>Precios y datos (Actualizado: {{ generated_at }})</p>
         </div>
         
         <div class="stats">
@@ -40,10 +36,10 @@
                 <div class="stat-number">{{ total_scrapes }}</div>
                 <div>Scrapes totales</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">{{ screenshots_count|default(0) }}</div>
-                <div>Screenshots capturados</div>
-            </div>
+        </div>
+        
+        <div class="screenshots-note">
+            📸 <strong>Screenshots disponibles en:</strong> <code>reports/screenshots/</code><br>
         </div>
         
         <div class="chart-container">
@@ -53,23 +49,7 @@
         <div class="products-grid">
             {% for product in products %}
             <div class="product-card">
-                <!-- ✅ #22 SCREENSHOT -->
-                {% if product.screenshot %}
-                <div class="product-image">
-                    <img src="{{ product.screenshot.replace('/app/reports/','screenshots/') }}" 
-                         alt="{{ product.title[:50] }}" 
-                         class="screenshot"
-                         loading="lazy"
-                         onerror="this.nextElementSibling.style.display='flex'; this.style.display='none';">
-                    <div class="screenshot-status">✅ Capturado</div>
-                </div>
-                {% else %}
-                <div class="product-image">
-                    <div class="no-screenshot">📸 Screenshot no disponible</div>
-                </div>
-                {% endif %}
-                
-                <div class="product-title">{{ product.title }}</div>
+                <div class="product-title">{{ product.title[:60] }}...</div>
                 <div class="product-price">{{ product.price }}</div>
                 
                 {% if product.ratings_count %}
@@ -80,7 +60,7 @@
                 <div class="related-products">
                     <strong>Relacionados:</strong><br>
                     {% for related in product.related_products[:3] %}
-                    {{ related.name[:40] }}: <strong>{{ related.price }}</strong><br>
+                    {{ related.name[:30] }}: {{ related.price }}<br>
                     {% endfor %}
                 </div>
                 {% endif %}
