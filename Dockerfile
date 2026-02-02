@@ -16,7 +16,11 @@ RUN mkdir -p /app/data /var/log/cron && \
     chmod 777 /app/data /var/log/cron /var/log/cron/*
 
 RUN pip install --no-cache-dir \
-    requests beautifulsoup4 pydantic tomli
+    requests \
+    beautifulsoup4 \
+    pydantic \
+    tomli \
+    jinja2
 
 # Cronjob cada 2 min + PATH completo
 RUN echo "*/2 * * * * cd /app && /usr/local/bin/python -m src.game_scraper.main >> /var/log/cron/scraper.log 2>&1" > /etc/cron.d/game-scraper && \

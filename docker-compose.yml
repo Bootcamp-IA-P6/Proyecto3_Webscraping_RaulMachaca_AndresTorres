@@ -6,4 +6,7 @@ services:
       - type: bind
         source: "./data"
         target: "/app/data"
+      - type: bind
+        source: "./reports"
+        target: "/app/reports"
     restart: unless-stopped
