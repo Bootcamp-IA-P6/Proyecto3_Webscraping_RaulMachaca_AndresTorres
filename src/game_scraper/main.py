@@ -5,7 +5,7 @@ from pathlib import Path
 from .scraper import GameScraper
 from .models import GameProduct
 from .storage import save_all_formats
-#from .config import load_config  # Temporal
+from .config import load_config  # Temporal
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -38,5 +38,13 @@ def main():
     else:
         print("❌ Scraping FAILED")
 
+def generate_report():
+    """Generate HTML dashboard after scraping."""
+    from .reports import HtmlReportGenerator
+    generator = HtmlReportGenerator()
+    report_path = generator.generate_dashboard()
+    print(f"📊 HTML Report: {report_path}")
+
 if __name__ == "__main__":
     main()
+    generate_report()  # Auto-generate after scrape

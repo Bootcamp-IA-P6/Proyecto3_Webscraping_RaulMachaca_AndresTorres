@@ -7,7 +7,7 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 
 from .parser import GameEsParser
-#from .config import load_config  # Will create in next commit
+from .config import load_config  # Will create in next commit
 
 logger = logging.getLogger(__name__)
 

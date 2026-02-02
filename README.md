@@ -100,3 +100,94 @@ game-scraper:
   ✅ pip deps: requests + beautifulsoup4
   ✅ CMD: python -m src.game_scraper.main
 ```
+
+### ⏰ CRONJOB PRODUCTION (cada 2 minutos)
+
+Cronjob configurado para ejecutar el scraper automáticamente en entorno de producción, generando archivos persistentes cada 2 minutos mediante Docker.
+
+- Ejecución automática cada 2 minutos
+
+- Generación de archivos JSON + CSV con timestamp
+
+- Logs accesibles desde Docker y dentro del contenedor
+
+- Compatible con Windows + Git Bash usando MSYS_NO_PATHCONV=1
+
+### 🎯 Step 3 – Resumen
+
+✅ Cron ejecuta el scraper cada 2 minutos
+
+✅ Archivos generados:
+data/products_YYYYMMDD_HHMMSS.json
+data/products_YYYYMMDD_HHMMSS.csv
+
+✅ Logs disponibles en:
+
+docker-compose logs -f
+
+/var/log/cron/scraper.log
+
+✅ Volumen persistente en Windows (Git Bash compatible)
+
+### 🚀 Comandos Git Bash (Windows)
+## Inicio (cron automático)
+MSYS_NO_PATHCONV=1 docker-compose up -d --build
+
+## Ver logs en vivo (ejecución cada 2 minutos)
+MSYS_NO_PATHCONV=1 docker-compose logs -f
+
+## Detener el servicio
+MSYS_NO_PATHCONV=1 docker-compose down
+
+## Ver archivos generados localmente
+ls -la data/      # En Windows: dir data\
+
+### 📁 docker-compose.yml
+```bash
+services:
+  game-scraper:
+    build: .
+    container_name: game-scraper-cron
+    volumes:
+      - type: bind
+        source: "./data"
+        target: "/app/data"
+    restart: unless-stopped
+```
+
+### ✅ Output Esperado
+data/products_20260202_013000.json
+data/products_20260202_013000.csv
+data/products_20260202_013200.json
+data/products_20260202_013200.csv
+
+
+Todos los archivos se generan localmente en la carpeta data/ cada 2 minutos.
+
+### 🔧 Troubleshooting (Windows / Git Bash)
+## Problema
+
+Se crea una carpeta incorrecta llamada data;C.
+
+### Solución
+
+#### Usar siempre:
+```bash
+MSYS_NO_PATHCONV=1 docker-compose up -d
+```
+
+### Alternativa directa con Docker:
+```bash
+docker run -v "$(pwd)/data:/app/data"
+```
+### 📊 Métricas Step 3
+
+- Cron frequency: */2 * * * * (cada 2 minutos)
+
+- Archivos generados: 720 por día (JSON + CSV)
+
+- Tamaño estimado: ~50 KB por ejecución
+
+- Uso diario: ~36 MB / día
+
+- Almacenamiento: volumen local persistente (data/)

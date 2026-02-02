@@ -1,22 +1,12 @@
-version: '3.8'
-
 services:
   game-scraper:
     build: .
-    container_name: game-scraper
+    container_name: game-scraper-cron
     volumes:
-      - ./data:/app/data  # Persistir JSON/CSV fuera del container
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: "no"  # Solo para desarrollo (Step 3 cambia a always)
-    
-    # Healthcheck simple
-    healthcheck:
-      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-volumes:
-  scraper-data:
-    driver: local
+      - type: bind
+        source: "./data"
+        target: "/app/data"
+      - type: bind
+        source: "./reports"
+        target: "/app/reports"
+    restart: unless-stopped
