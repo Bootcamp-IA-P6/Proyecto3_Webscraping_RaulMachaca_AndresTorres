@@ -56,11 +56,14 @@ class HtmlReportGenerator:
             except:
                 continue
         
+        screenshots_count = sum(1 for p in products if p.get('screenshot'))
+
         context = {
             'products': products[:12],  # Latest 12
             'price_trend': prices[-7:],  # Last 7 scrapes
             'titles': titles[-7:],
             'total_scrapes': len(products),
+            'screenshots_count': screenshots_count,  # ✅ NUEVO
             'generated_at': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         

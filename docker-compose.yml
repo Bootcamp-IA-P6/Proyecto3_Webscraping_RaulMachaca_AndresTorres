@@ -2,6 +2,12 @@ services:
   game-scraper:
     build: .
     container_name: game-scraper-cron
+    init: true
+    ipc: host
+    cap_add:
+      - SYS_ADMIN
+    ports:
+      - "8080:8080"  # 🔥 LIVE DASHBOARD
     volumes:
       - type: bind
         source: "./data"

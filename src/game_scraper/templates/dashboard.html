@@ -15,18 +15,20 @@
         .stat-card { background: #2a2a2a; padding: 20px; border-radius: 10px; text-align: center; }
         .stat-number { font-size: 2em; color: #ff6b35; font-weight: bold; }
         .chart-container { background: #2a2a2a; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
         .product-card { background: #363636; padding: 20px; border-radius: 10px; }
         .product-title { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; }
-        .product-price { font-size: 1.5em; color: #4ecdc4; font-weight: bold; }
+        .product-price { font-size: 1.5em; color: #4ecdc4; font-weight: bold; margin-bottom: 10px; }
+        .ratings { color: #ffeb3b; font-size: 0.9em; margin-bottom: 10px; }
         .related-products { margin-top: 15px; font-size: 0.9em; color: #ccc; }
+        .screenshots-note { background: #2a2a2a; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; color: #ff6b35; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🎮 GAME.es Warhammer Monitor</h1>
-            <p>Precios y productos relacionados (Actualizado: {{ generated_at }})</p>
+            <p>Precios y datos (Actualizado: {{ generated_at }})</p>
         </div>
         
         <div class="stats">
@@ -36,6 +38,10 @@
             </div>
         </div>
         
+        <div class="screenshots-note">
+            📸 <strong>Screenshots disponibles en:</strong> <code>reports/screenshots/</code><br>
+        </div>
+        
         <div class="chart-container">
             <canvas id="priceChart"></canvas>
         </div>
@@ -43,17 +49,25 @@
         <div class="products-grid">
             {% for product in products %}
             <div class="product-card">
-                <div class="product-title">{{ product.title }}</div>
+                <div class="product-title">{{ product.title[:60] }}...</div>
                 <div class="product-price">{{ product.price }}</div>
+                
                 {% if product.ratings_count %}
-                <div>{{ product.ratings_count }}</div>
+                <div class="ratings">{{ product.ratings_count }}</div>
                 {% endif %}
+                
                 {% if product.related_products %}
                 <div class="related-products">
-                    Relacionados:<br>
+                    <strong>Relacionados:</strong><br>
                     {% for related in product.related_products[:3] %}
-                    {{ related.name }}: {{ related.price }}<br>
+                    {{ related.name[:30] }}: {{ related.price }}<br>
                     {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% if product.scraped_file %}
+                <div style="font-size: 0.8em; color: #888; margin-top: 10px;">
+                    📄 {{ product.scraped_file }}
                 </div>
                 {% endif %}
             </div>
@@ -66,10 +80,10 @@
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: {{ titles|tojson }},
+                labels: {{ titles|tojson|safe }},
                 datasets: [{
                     label: 'Precio Warhammer (€)',
-                    data: {{ price_trend|tojson }},
+                    data: {{ price_trend|tojson|safe }},
                     borderColor: '#ff6b35',
                     backgroundColor: 'rgba(255, 107, 53, 0.1)',
                     tension: 0.4,
@@ -78,9 +92,7 @@
             },
             options: {
                 responsive: true,
-                scales: {
-                    y: { beginAtZero: false }
-                }
+                scales: { y: { beginAtZero: false } }
             }
         });
     </script>
