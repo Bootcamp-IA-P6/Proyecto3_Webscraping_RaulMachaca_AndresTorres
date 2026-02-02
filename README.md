@@ -36,7 +36,17 @@ venv\Scripts\Activate.ps1
 ```bash
 git clone <repo>
 cd Proyecto3_Webscraping_RaulMachaca
+```
+## Antes que nada, despues de importar tendremos que cambiar el CRLF del archivo entrypoint.sh, lo pondremos a LF, clickando encima de este.
+<img width="527" height="299" alt="image" src="https://github.com/user-attachments/assets/588e9403-dc83-48a4-bfdb-d7fb72ebf5d1" />
 
+## Lo cambiamos
+<img width="872" height="137" alt="image" src="https://github.com/user-attachments/assets/37f338d9-de68-4530-88d2-f38018f3b14a" />
+
+## Deberia estar asi, y no te olvides de guardar:
+<img width="506" height="286" alt="image" src="https://github.com/user-attachments/assets/655da4ca-0b6b-4459-af09-050be6e70d09" />
+
+```bash
 mkdir -p data reports
 docker-compose up --build -d
 
