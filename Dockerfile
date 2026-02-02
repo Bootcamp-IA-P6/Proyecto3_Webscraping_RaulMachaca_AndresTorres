@@ -29,7 +29,7 @@ RUN mkdir -p /root/.cache/ms-playwright/chromium-1117/chrome-linux && \
     ln -sf /ms-playwright/chromium-*/chrome-linux/chrome /root/.cache/ms-playwright/chromium-1117/chrome-linux/chrome
 
 # Cron setup
-RUN echo "*/2 * * * * root cd /app && python -m src.game_scraper.main >> /var/log/cron/scraper.log 2>&1" > /etc/cron.d/game-scraper && \
+RUN echo "*/1 * * * * root cd /app && python -m src.game_scraper.main >> /var/log/cron/scraper.log 2>&1" > /etc/cron.d/game-scraper && \
     chmod 0644 /etc/cron.d/game-scraper
 
 RUN chmod +x /app/entrypoint.sh
