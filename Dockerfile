@@ -3,6 +3,7 @@ FROM python:3.12-slim
 RUN apt-get update && apt-get install -y \
     cron \
     curl \
+    chromium \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -20,7 +21,9 @@ RUN pip install --no-cache-dir \
     beautifulsoup4 \
     pydantic \
     tomli \
-    jinja2
+    jinja2 \
+    playwright 
+RUN playwright install chromium
 
 RUN echo "*/2 * * * * cd /app && /usr/local/bin/python -m src.game_scraper.main >> /var/log/cron/scraper.log 2>&1" > /etc/cron.d/game-scraper && \
     chmod 0644 /etc/cron.d/game-scraper && \
