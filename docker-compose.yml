@@ -2,8 +2,16 @@ services:
   game-scraper:
     build: .
     container_name: game-scraper-cron
+    # FLAGS CRÍTICOS para Playwright
+    init: true
+    ipc: host
+    cap_add:
+      - SYS_ADMIN
     volumes:
       - type: bind
         source: "./data"
         target: "/app/data"
+      - type: bind
+        source: "./reports"
+        target: "/app/reports"
     restart: unless-stopped

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAME.es Warhammer Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a1a; color: #fff; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { color: #ff6b35; font-size: 2.5em; margin-bottom: 10px; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .stat-card { background: #2a2a2a; padding: 20px; border-radius: 10px; text-align: center; }
+        .stat-number { font-size: 2em; color: #ff6b35; font-weight: bold; }
+        .chart-container { background: #2a2a2a; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .product-card { background: #363636; padding: 20px; border-radius: 10px; transition: transform 0.3s; }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-image { margin-bottom: 15px; border-radius: 8px; overflow: hidden; }
+        .screenshot { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+        .product-title { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .product-price { font-size: 1.5em; color: #4ecdc4; font-weight: bold; margin-bottom: 10px; }
+        .ratings { color: #ffeb3b; font-size: 0.9em; margin-bottom: 10px; }
+        .related-products { margin-top: 15px; font-size: 0.9em; color: #ccc; }
+        .no-screenshot { height: 200px; background: #2a2a2a; display: flex; align-items: center; justify-content: center; color: #666; border-radius: 8px; border: 2px dashed #444; }
+        .screenshot-status { font-size: 0.8em; padding: 4px 8px; border-radius: 4px; background: #ff6b35; color: white; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 GAME.es Warhammer Monitor</h1>
+            <p>Precios, productos relacionados y 📸 screenshots (Actualizado: {{ generated_at }})</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_scrapes }}</div>
+                <div>Scrapes totales</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ screenshots_count|default(0) }}</div>
+                <div>Screenshots capturados</div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="priceChart"></canvas>
+        </div>
+        
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <!-- ✅ #22 SCREENSHOT -->
+                {% if product.screenshot %}
+                <div class="product-image">
+                    <img src="{{ product.screenshot.replace('/app/reports/','screenshots/') }}" 
+                         alt="{{ product.title[:50] }}" 
+                         class="screenshot"
+                         loading="lazy"
+                         onerror="this.nextElementSibling.style.display='flex'; this.style.display='none';">
+                    <div class="screenshot-status">✅ Capturado</div>
+                </div>
+                {% else %}
+                <div class="product-image">
+                    <div class="no-screenshot">📸 Screenshot no disponible</div>
+                </div>
+                {% endif %}
+                
+                <div class="product-title">{{ product.title }}</div>
+                <div class="product-price">{{ product.price }}</div>
+                
+                {% if product.ratings_count %}
+                <div class="ratings">{{ product.ratings_count }}</div>
+                {% endif %}
+                
+                {% if product.related_products %}
+                <div class="related-products">
+                    <strong>Relacionados:</strong><br>
+                    {% for related in product.related_products[:3] %}
+                    {{ related.name[:40] }}: <strong>{{ related.price }}</strong><br>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% if product.scraped_file %}
+                <div style="font-size: 0.8em; color: #888; margin-top: 10px;">
+                    📄 {{ product.scraped_file }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ titles|tojson|safe }},
+                datasets: [{
+                    label: 'Precio Warhammer (€)',
+                    data: {{ price_trend|tojson|safe }},
+                    borderColor: '#ff6b35',
+                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: false } }
+            }
+        });
+    </script>
+</body>
+</html>
