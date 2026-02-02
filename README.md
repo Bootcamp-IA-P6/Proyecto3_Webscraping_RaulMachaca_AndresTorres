@@ -1,8 +1,3 @@
-
-Absolutely, Andrés — here is your **full README**, **in English**, **advanced Markdown**, **with table of contents**, and **preserving 100% of your original content** while keeping it clean, professional, and ready to paste directly into GitHub.
-
----
-
 # 🎮 Game Scraper
 
 Professional **GAME.es** web scraper that extracts **Warhammer 40k** product data:
